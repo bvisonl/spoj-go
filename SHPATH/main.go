@@ -6,27 +6,22 @@ import (
 	"fmt"
 )
 
-type distance struct {
-	index int
-	cost int
-}
-
 type city struct {
-	name string
-	distances []distance
+	name       string
+	neighbours int
+	distances  map[int]int
 }
 
 type test struct {
-	n int // Number of cities
+	n      int // Number of cities
 	cities []city
-	r int // Number of paths to find
-	paths [][]string
-
+	r      int // Number of paths to find
+	paths  [][]string
 }
 
-func main()  {
+func main() {
 
-	var tests = []test
+	tests := []test{}
 
 	// Number of tests
 	var s int
@@ -34,35 +29,36 @@ func main()  {
 
 	// Capture tests
 	for i := 0; i < s; i++ {
-		var n int
-		fmt.Scanln(&n)
+		var t test
 
-		var name string
-		fmt.Scanln(&name)
+		fmt.Scanln(&t.n)
 
-		var p int
-		fmt.Scanln(&p)
+		for j := 0; j < t.n; j++ {
+			c := city{distances: map[int]int{}}
 
-		for j := 0; j < p; j++ {
-			var nr int
-			var cost int
-			fmt.Scanln(&nr, &cost)
+			fmt.Scanln(&c.name)
+			fmt.Scanln(&c.neighbours)
 
+			for k := 0; k < c.neighbours; k++ {
+				var index, cost int
+				fmt.Scanln(&index, &cost)
+				c.distances[index] = cost
+			}
+
+			t.cities = append(t.cities, c)
 		}
 
+		fmt.Scanln(&t.r)
 
+		for j := 0; j < t.r; j++ {
+			var src, dst string
+			fmt.Scanln(&src, &dst)
+			t.paths = append(t.paths, []string{src, dst})
+		}
 
+		tests = append(tests, t)
 	}
 
-	var n int
-
-	fmt.Println(m, n)
-
-	a := distance{index: 1, cost: 2}
-	b := []distance{}
-	b = append(b, a)
-	c := city{name: "Hi", distances: b}
-
-	fmt.Println(c)
+	fmt.Println(tests)
 
 }
