@@ -16,11 +16,46 @@ type city struct {
 	distances []distance
 }
 
+type test struct {
+	n int // Number of cities
+	cities []city
+	r int // Number of paths to find
+	paths [][]string
+
+}
+
 func main()  {
-	var m int
+
+	var tests = []test
+
+	// Number of tests
+	var s int
+	fmt.Scanln(&s)
+
+	// Capture tests
+	for i := 0; i < s; i++ {
+		var n int
+		fmt.Scanln(&n)
+
+		var name string
+		fmt.Scanln(&name)
+
+		var p int
+		fmt.Scanln(&p)
+
+		for j := 0; j < p; j++ {
+			var nr int
+			var cost int
+			fmt.Scanln(&nr, &cost)
+
+		}
+
+
+
+	}
+
 	var n int
 
-	fmt.Scanln(&m, &n)
 	fmt.Println(m, n)
 
 	a := distance{index: 1, cost: 2}
