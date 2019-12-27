@@ -7,9 +7,10 @@ import (
 )
 
 type city struct {
+	index	   int
 	name       string
 	neighbours int
-	distances  map[int]int
+	distances  [][]int
 	cost       int
 	prevCity   *city
 }
@@ -36,7 +37,7 @@ func main() {
 		fmt.Scanln(&t.n)
 
 		for j := 0; j < t.n; j++ {
-			c := city{distances: map[int]int{}, cost: 200000, prevCity: nil}
+			c := city{distances: [][]int{}, cost: 200000, prevCity: nil, index: j+1}
 
 			fmt.Scanln(&c.name)
 			fmt.Scanln(&c.neighbours)
@@ -44,7 +45,7 @@ func main() {
 			for k := 0; k < c.neighbours; k++ {
 				var index, cost int
 				fmt.Scanln(&index, &cost)
-				c.distances[index] = cost
+				c.distances = append(c.distances, []{index, cost})
 			}
 
 			t.cities = append(t.cities, c)
@@ -80,20 +81,29 @@ func main() {
 }
 
 func dijkstra(src *city, dst *city, cities []city) {
-
-	// We arrived to the dst
-	if src == dst {
-		fmt.Println(dst.cost)
+	for len(cities) >= 1 {
+		u, cities = cities[len(cities)-1], cities[:len(cities)-1]
+		for _, d := range u.distances {
+			c := findCityById(d[0], cities)
+			alt := u.cost + d[1]
+			if(c.cost > alt) {
+				c.cost = alt
+				c.prevCity = &u
+			}
+		}
 	}
-
-	src.cost = 0
-
-	for {
-
-	}
-
-	fmt.Println("Figuring out route from ", src.name, " to ", dst.name)
+	fmt.Println(dst.cost)
 }
+
+func findCityById(index int, cities []city) *city {
+	for _, c := range cities {
+		if c.index == index {
+			return &c
+		}
+	}
+	return nil
+}
+
 
 func findCity(name string, cities []city) *city {
 	for _, c := range cities {
