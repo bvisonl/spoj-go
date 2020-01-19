@@ -1,105 +1,92 @@
-// https://www.spoj.com/problems/SHPATH/
-
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
-type city struct {
-	name       string
-	neighbours int
-	distances  map[int]int
-	cost       int
-	prevCity   *city
+type Case struct {
+	Cities []City     `json:"cities"`
+	Paths  [][]string `json:"paths"`
 }
 
-type test struct {
-	n      int // Number of cities
-	cities []city
-	r      int // Number of paths to find
-	paths  [][]string
+type City struct {
+	Index       int          `json:"index"`
+	Name        string       `json:"name"`
+	Connections []Connection `json:"connections"`
+	Checked     bool         `json:"checked"`
+}
+
+type Connection struct {
+	CityId int `json:"city"`
+	Cost   int `json:"cost"`
 }
 
 func main() {
 
-	tests := []test{}
+	// Capture cases
+	tCases := []Case{}
+	captureCases(tCases)
 
-	// Number of tests
-	var s int
-	fmt.Scanln(&s)
+	// Process each case
 
-	// Capture tests
-	for i := 0; i < s; i++ {
-		var t test
+}
 
-		fmt.Scanln(&t.n)
+func captureCases(tCases []Case) {
 
-		for j := 0; j < t.n; j++ {
-			c := city{distances: map[int]int{}, cost: 200000, prevCity: nil}
+	// Capture # of test cases
+	var t int
+	fmt.Scanln(&t)
 
-			fmt.Scanln(&c.name)
-			fmt.Scanln(&c.neighbours)
+	for i := 0; i < t; i++ {
 
-			for k := 0; k < c.neighbours; k++ {
-				var index, cost int
-				fmt.Scanln(&index, &cost)
-				c.distances[index] = cost
+		// Initialize case
+		tCase := Case{
+			Cities: []City{},
+			Paths:  [][]string{},
+		}
+
+		// Capture # of cities
+		var n int
+		fmt.Scanln(&n)
+
+		// Capture cities
+		for j := 0; j < n; j++ {
+
+			// Initialize city
+			c := City{Index: j + 1, Connections: []Connection{}}
+			fmt.Scanln(&c.Name) // Name of the city
+
+			// # of neighbours
+			var p int
+			fmt.Scanln(&p)
+
+			// Capture connections
+			for k := 0; k < p; k++ {
+				var nr, cost int
+				fmt.Scanln(&nr, &cost)
+				c.Connections = append(c.Connections, Connection{CityId: nr, Cost: cost})
 			}
 
-			t.cities = append(t.cities, c)
+			tCase.Cities = append(tCase.Cities, c)
 		}
 
-		fmt.Scanln(&t.r)
+		// # of paths to find
+		var r int
+		fmt.Scanln(&r)
 
-		for j := 0; j < t.r; j++ {
+		for j := 0; j < r; j++ {
 			var src, dst string
 			fmt.Scanln(&src, &dst)
-			t.paths = append(t.paths, []string{src, dst})
+			tCase.Paths = append(tCase.Paths, []string{src, dst})
 		}
 
-		tests = append(tests, t)
-	}
-
-	// Process cases
-	for _, t := range tests {
-
-		var cities []city
-		copy(cities, t.cities)
-
-		for _, p := range t.paths {
-
-			src := findCity(p[0], cities)
-			src.cost = 0
-			dst := findCity(p[1], cities)
-
-			dijkstra(src, dst, cities)
-		}
-	}
-
-}
-
-func dijkstra(src *city, dst *city, cities []city) {
-
-	// We arrived to the dst
-	if src == dst {
-		fmt.Println(dst.cost)
-	}
-
-	src.cost = 0
-
-	for {
+		tCases = append(tCases, tCase)
 
 	}
 
-	fmt.Println("Figuring out route from ", src.name, " to ", dst.name)
-}
+	// Dump the case
+	tCasesJson, _ := json.MarshalIndent(tCases, "", "	")
+	fmt.Printf("%s\n", tCasesJson)
 
-func findCity(name string, cities []city) *city {
-	for _, c := range cities {
-		if c.name == name {
-			return &c
-		}
-	}
-	return nil
 }
